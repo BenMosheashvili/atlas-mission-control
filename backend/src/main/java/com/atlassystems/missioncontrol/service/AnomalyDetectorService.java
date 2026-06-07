@@ -101,7 +101,7 @@ public class AnomalyDetectorService {
      *               the computed Z-score.
      */
     public AnomalyResult evaluate(MetricEvent event) {
-        String key   = windowKey(event.serviceId(), event.metricType());
+        String key   = windowKey(event.nodeId(), event.metricType());
         double value = event.value();
 
         // 1. Update the sliding window (thread-safe via per-Deque sync).
@@ -119,12 +119,12 @@ public class AnomalyDetectorService {
 
         if (isAnomaly) {
             meterRegistry.counter("anomaly.detected",
-                "service", event.serviceId(),
+                "service", event.nodeId(),
                 "metric",  event.metricType()
             ).increment();
 
             log.warn("[AnomalyDetector] Anomaly: service={} metric={} value={} z={}",
-                     event.serviceId(), event.metricType(), value, String.format("%.2f", zResult.z()));
+                     event.nodeId(), event.metricType(), value, String.format("%.2f", zResult.z()));
         }
 
         return AnomalyResult.of(

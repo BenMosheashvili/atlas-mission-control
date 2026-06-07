@@ -4,6 +4,7 @@ import com.atlassystems.missioncontrol.dto.MetricEvent;
 import com.atlassystems.missioncontrol.service.AnomalyDetectorService;
 import com.atlassystems.missioncontrol.service.MetricCacheService;
 import com.atlassystems.missioncontrol.sse.SseEmitterRegistry;
+import com.atlassystems.missioncontrol.sse.SseEvent;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import lombok.RequiredArgsConstructor;
@@ -113,7 +114,7 @@ public class MetricEventConsumer {
         CompletableFuture<Void> redisFuture = cacheService
             .updateMetric(event)
             .exceptionally(ex -> {
-                log.error("[MetricConsumer] Redis write failed for serviceId={}", event.serviceId(), ex);
+                log.error("[MetricConsumer] Redis write failed for serviceId={}", event.nodeId(), ex);
                 return null; // tolerated — Redis is a cache; source of truth is InfluxDB
             });
 
@@ -121,7 +122,7 @@ public class MetricEventConsumer {
         CompletableFuture<AnomalyResult> anomalyFuture = CompletableFuture
             .supplyAsync(() -> anomalyDetector.evaluate(event), observerTaskExecutor)
             .exceptionally(ex -> {
-                log.error("[MetricConsumer] Anomaly eval failed for serviceId={}", event.serviceId(), ex);
+                log.error("[MetricConsumer] Anomaly eval failed for serviceId={}", event.nodeId(), ex);
                 dlqPublisher.publish(record, ex);
                 return AnomalyResult.none(); // sentinel — no anomaly emitted on eval failure
             });
@@ -131,16 +132,16 @@ public class MetricEventConsumer {
             .thenAcceptAsync(result -> {
                 if (result.isAnomaly()) {
                     log.info("[MetricConsumer] Anomaly detected: serviceId={} score={}",
-                             event.serviceId(), result.zScore());
+                             event.nodeId(), result.zScore());
                     sseRegistry.broadcast(
-                        SseEvent.anomaly(event.serviceId(), result)
+                        SseEvent.anomaly(event.nodeId(), result)
                     );
                 }
                 // Always push the raw metric update to subscribed dashboards.
                 sseRegistry.broadcast(SseEvent.metric(event));
             }, observerTaskExecutor)
             .exceptionally(ex -> {
-                log.warn("[MetricConsumer] SSE broadcast failed for serviceId={}", event.serviceId(), ex);
+                log.warn("[MetricConsumer] SSE broadcast failed for serviceId={}", event.nodeId(), ex);
                 return null; // SSE failure is non-fatal; don't DLQ
             });
 
