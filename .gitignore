@@ -1,15 +1,23 @@
-# Gradle
+# Gradle / Spring
 .gradle/
 .gradle-dist/
 build/
 bin/
 out/
 *.class
+*.log
+**/src/main/resources/application-local.yml
+**/src/main/resources/application-local.properties
+
 
 # Node / Frontend
 node_modules/
 dist/
 .eslintcache
+.env
+.env.*
+local.properties
+
 
 # IDEs
 .idea/
