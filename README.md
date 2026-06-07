@@ -4,6 +4,9 @@
 
 ---
 
+<img width="883" height="420" alt="image" src="https://github.com/user-attachments/assets/d3bd2f07-ef26-4767-88f2-0a336fc256a1" />
+
+
 ## The Question I Wanted to Answer
 
 When a server fails inside a company like Netflix or Amazon, engineers don't just ask *"what broke?"*
