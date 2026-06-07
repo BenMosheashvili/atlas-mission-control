@@ -19,20 +19,14 @@ Dijkstra-weighted blast radius analysis, and Z-Score anomaly detection.
 - Node 18+
 - Docker (for Neo4j + Redis + Kafka)
 
-### Infrastructure (Docker)
+### Infrastructure (Docker Compose)
+
+You can spin up all the required infrastructure (Neo4j with APOC, Redis, and Kafka in KRaft mode) with a single command:
+
 ```bash
-docker run -d --name neo4j \
-  -p 7474:7474 -p 7687:7687 \
-  -e NEO4J_AUTH=neo4j/atlas-secret \
-  -e NEO4J_PLUGINS='["apoc"]' \
-  neo4j:5
-
-docker run -d --name redis -p 6379:6379 redis:7
-
-docker run -d --name kafka -p 9092:9092 \
-  -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 \
-  confluentinc/cp-kafka:7.5.0
+docker compose up -d
 ```
+
 
 ### Backend
 ```bash
