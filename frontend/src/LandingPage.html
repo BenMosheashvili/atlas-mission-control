@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Atlas Systems — Systems Failure Is Not An Option</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=JetBrains+Mono:wght@300;400;500;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal:   #00c8aa;
+    --teal2:  #00e5c5;
+    --bg:     #04090e;
+    --bgd:    #020609;
+    --dim:    #0d1e2e;
+    --border: #0e2236;
+    --text:   #c8dae8;
+    --muted:  #3d5a6e;
+  }
+
+  html, body {
+    width: 100%; min-height: 100vh;
+    background: var(--bg);
+    color: #fff;
+    font-family: 'Barlow', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── GRID LAYOUT ── */
+  .page-grid {
+    display: grid;
+    grid-template-columns: 1fr 240px;
+    grid-template-rows: auto 1fr;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    grid-column: 1 / 2;
+    padding: 24px 40px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-svg { width: 46px; height: 46px; }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .brand-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: 0.22em;
+    color: #fff;
+    line-height: 1;
+  }
+  .brand-sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.35em;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  /* ── RIGHT NAV ── */
+  .right-nav {
+    grid-column: 2 / 3;
+    grid-row: 1 / 3;
+    background: var(--bgd);
+    border-left: 1px solid var(--border);
+    padding: 28px 0 28px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .nav-links {
+    list-style: none;
+    padding: 0 0 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .nav-links li { position: relative; }
+  .nav-links a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 22px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--teal); }
+  .nav-links .arrow { font-size: 10px; color: var(--muted); }
+
+  .nav-cta {
+    margin: 0 18px 20px;
+    padding: 10px 16px;
+    background: var(--teal);
+    border: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: #03080d;
+    cursor: pointer;
+    text-align: center;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--teal2); }
+
+  .feature-cards {
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+  }
+
+  .feature-card {
+    border: 1px solid var(--border);
+    padding: 14px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #060f18;
+    position: relative;
+  }
+  .feature-card::before,
+  .feature-card::after {
+    content: '';
+    position: absolute;
+    width: 8px; height: 8px;
+    border-color: var(--teal);
+    border-style: solid;
+  }
+  .feature-card::before { top: -1px; right: -1px; border-width: 1px 1px 0 0; }
+  .feature-card::after  { bottom: -1px; left: -1px; border-width: 0 0 1px 1px; }
+
+  .feature-icon {
+    width: 38px; height: 38px;
+    border: 1px solid var(--teal);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--teal);
+  }
+  .feature-icon svg { width: 20px; height: 20px; }
+
+  .feature-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .nav-cta-bottom {
+    margin: auto 18px 0;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .main-content {
+    grid-column: 1 / 2;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 40px 40px;
+  }
+
+  /* ── HERO TEXT ── */
+  .hero {
+    margin-bottom: 32px;
+  }
+
+  .hero-headline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(52px, 7vw, 82px);
+    font-weight: 900;
+    line-height: 0.92;
+    letter-spacing: 0.01em;
+    color: #fff;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  .hero-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.7;
+    letter-spacing: 0.02em;
+    max-width: 480px;
+  }
+
+  /* ── MONITOR ── */
+  .monitor-wrap {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    flex: 1;
+  }
+
+  .monitor-outer {
+    position: relative;
+    width: 100%;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  /* Curved monitor body using CSS */
+  .monitor-screen {
+    width: 100%;
+    aspect-ratio: 21/10;
+    border-radius: 12px 12px 6px 6px;
+    border: 2px solid #1a3248;
+    background: #05111e;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 1px #0a2035,
+      0 30px 80px -20px rgba(0, 200, 170, 0.08),
+      0 60px 120px -30px rgba(0,0,0,0.8);
+    /* Simulate slight curve with perspective */
+    transform: perspective(1400px) rotateX(3deg);
+    transform-origin: center top;
+  }
+
+  .monitor-stand {
+    width: 80px; height: 22px;
+    background: linear-gradient(to bottom, #1a2e3f, #0d1f2f);
+    margin: 0 auto;
+    clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+    border: 1px solid #1a3248;
+    border-top: none;
+  }
+
+  .monitor-base {
+    width: 160px; height: 8px;
+    background: #0d1f2f;
+    margin: 0 auto;
+    border-radius: 4px;
+    border: 1px solid #1a3248;
+  }
+
+  /* ── DASHBOARD INSIDE MONITOR ── */
+  .dash-inner {
+    width: 100%; height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    grid-template-rows: 30px 1fr;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    background: #060f18;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Top bar inside dash */
+  .dash-topbar {
+    grid-column: 1 / 3;
+    background: #03080e;
+    border-bottom: 1px solid #0a1e30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+  }
+
+  .dash-brand {
+    display: flex; align-items: center; gap: 7px;
+    color: #c8dae8; font-size: 9px; font-weight: 700; letter-spacing: 0.08em;
+  }
+  .dash-brand-diamond {
+    width: 12px; height: 12px; background: var(--teal);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  }
+
+  .dash-sse {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 7.5px; color: var(--text);
+  }
+  .dash-sse-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: #ff4466;
+    animation: sseP 1.2s ease-in-out infinite;
+  }
+  @keyframes sseP { 0%,100%{ box-shadow: 0 0 0 0 rgba(255,68,102,0.7); } 50%{ box-shadow: 0 0 0 4px rgba(255,68,102,0); } }
+
+  /* Topology area */
+  .dash-topo {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at 38% 50%, rgba(0,100,180,0.07) 0%, transparent 55%);
+  }
+
+  .dash-topo::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,200,170,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,200,170,0.025) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  /* Right panels */
+  .dash-right {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+    border-left: 1px solid #0a1e30;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .dash-panel {
+    border-bottom: 1px solid #0a1e30;
+    padding: 8px 10px;
+    flex-shrink: 0;
+  }
+  .dash-panel-title {
+    font-size: 7.5px; font-weight: 700; letter-spacing: 0.14em;
+    color: var(--teal); margin-bottom: 6px;
+  }
+  .dash-incident-row {
+    padding: 5px 0;
+    border-bottom: 1px solid #0a1e3066;
+    font-size: 6.5px; color: var(--text);
+    line-height: 1.6;
+  }
+  .dash-incident-row strong { color: #ff7799; }
+
+  .dash-telemetry { flex: 1; padding: 8px 10px; overflow: hidden; }
+
+  /* Mini bar chart */
+  .mini-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 28px;
+    margin-bottom: 5px;
+  }
+  .mini-bar {
+    width: 4px;
+    background: var(--teal);
+    border-radius: 1px 1px 0 0;
+    opacity: 0.8;
+  }
+  .mini-bar.amber { background: #f59e0b; }
+  .mini-bar.red   { background: #ff4466; }
+
+  /* Blast radius popup inside monitor */
+  .blast-popup {
+    position: absolute;
+    right: 295px; bottom: 18%;
+    background: #e8eef3;
+    border: 1px solid #ccd8e0;
+    padding: 10px 14px;
+    z-index: 10;
+    min-width: 140px;
+  }
+  .blast-popup-title {
+    font-weight: 700; font-size: 7.5px; letter-spacing: 0.08em;
+    color: #0d1e2e; margin-bottom: 6px;
+  }
+  .blast-popup-row { font-size: 7px; color: #2a3e4f; margin: 2px 0; }
+  .blast-popup-row span { font-weight: 700; color: #1a3248; }
+
+  /* Topology SVG positioned inside .dash-topo */
+  .topo-svg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+  }
+
+  /* ── SCAN LINE overlay on monitor ── */
+  .scanlines {
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 3px,
+      rgba(0,0,0,0.06) 3px,
+      rgba(0,0,0,0.06) 4px
+    );
+    pointer-events: none;
+    z-index: 20;
+    border-radius: 12px 12px 6px 6px;
+  }
+
+  /* ── SCAN GLOW ── */
+  .screen-glow {
+    position: absolute;
+    inset: -40px;
+    background: radial-gradient(ellipse at 50% 50%, rgba(0,200,170,0.06) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Ambient glow behind monitor */
+  .monitor-glow {
+    position: absolute;
+    width: 70%; height: 60%;
+    top: 20%; left: 15%;
+    background: radial-gradient(ellipse, rgba(0,200,170,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* ── BLINKING cursor ── */
+  @keyframes blink { 0%,49%{ opacity:1; } 50%,100%{ opacity:0; } }
+
+  /* ── NODE PULSE ── */
+  @keyframes nodePulse {
+    0%   { r: 7; opacity: 1; }
+    50%  { r: 11; opacity: 0.5; }
+    100% { r: 7; opacity: 1; }
+  }
+  .node-pulse { animation: nodePulse 1.6s ease-in-out infinite; }
+
+  @keyframes nodeGlow {
+    0%,100% { filter: drop-shadow(0 0 3px #ff3366); }
+    50%      { filter: drop-shadow(0 0 10px #ff3366); }
+  }
+  .node-hot { animation: nodeGlow 1.2s ease-in-out infinite; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 960px) {
+    .page-grid { grid-template-columns: 1fr; }
+    .right-nav { display: none; }
+    .hero-headline { font-size: 44px; }
+  }
+</style>
+</head>
+<body>
+<div class="page-grid">
+
+  <!-- ── HEADER ── -->
+  <header class="header">
+    <!-- Atlas Systems Logo SVG -->
+    <svg class="logo-svg" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Outer hexagon -->
+      <polygon points="40,4 72,22 72,58 40,76 8,58 8,22" fill="none" stroke="#00c8aa" stroke-width="2"/>
+      <!-- Inner geometry lines -->
+      <line x1="40" y1="4"  x2="40" y2="76" stroke="#00c8aa" stroke-width="0.8" opacity="0.45"/>
+      <line x1="8"  y1="22" x2="72" y2="58" stroke="#00c8aa" stroke-width="0.8" opacity="0.45"/>
+      <line x1="8"  y1="58" x2="72" y2="22" stroke="#00c8aa" stroke-width="0.8" opacity="0.45"/>
+      <line x1="40" y1="4"  x2="72" y2="58" stroke="#00c8aa" stroke-width="0.6" opacity="0.3"/>
+      <line x1="40" y1="4"  x2="8"  y2="58" stroke="#00c8aa" stroke-width="0.6" opacity="0.3"/>
+      <line x1="40" y1="76" x2="72" y2="22" stroke="#00c8aa" stroke-width="0.6" opacity="0.3"/>
+      <line x1="40" y1="76" x2="8"  y2="22" stroke="#00c8aa" stroke-width="0.6" opacity="0.3"/>
+      <!-- Inner hexagon -->
+      <polygon points="40,18 56,27 56,53 40,62 24,53 24,27" fill="none" stroke="#00c8aa" stroke-width="1.2" opacity="0.6"/>
+      <!-- White diamond S-shape -->
+      <polygon points="40,23 52,40 40,50 28,40" fill="white"/>
+      <polygon points="40,30 48,40 40,44 32,40" fill="#050a0e"/>
+      <circle cx="40" cy="40" r="3" fill="#050a0e"/>
+      <!-- Teal corner dots -->
+      <circle cx="40" cy="4"  r="2" fill="#00c8aa"/>
+      <circle cx="72" cy="22" r="2" fill="#00c8aa"/>
+      <circle cx="72" cy="58" r="2" fill="#00c8aa"/>
+      <circle cx="40" cy="76" r="2" fill="#00c8aa"/>
+      <circle cx="8"  cy="58" r="2" fill="#00c8aa"/>
+      <circle cx="8"  cy="22" r="2" fill="#00c8aa"/>
+    </svg>
+
+    <div class="brand-text">
+      <span class="brand-name">ATLAS</span>
+      <span class="brand-sub">SYSTEMS</span>
+    </div>
+  </header>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main class="main-content">
+
+    <!-- Hero -->
+    <div class="hero">
+      <h1 class="hero-headline">
+        Systems Failure<br>Is Not An Option.
+      </h1>
+      <p class="hero-sub">
+        Visualize, Isolate, Neutralize: Infrastructure<br>
+        Observability without compromises.
+      </p>
+    </div>
+
+    <!-- Monitor -->
+    <div class="monitor-wrap">
+      <div class="monitor-glow"></div>
+      <div class="monitor-outer">
+        <div class="monitor-screen" id="monitorScreen">
+
+          <!-- Scan lines overlay -->
+          <div class="scanlines"></div>
+
+          <!-- Dashboard inside monitor -->
+          <div class="dash-inner">
+
+            <!-- Top bar -->
+            <div class="dash-topbar">
+              <div class="dash-brand">
+                <div class="dash-brand-diamond"></div>
+                Atlas MissionControl
+              </div>
+              <div class="dash-sse">
+                <div class="dash-sse-dot"></div>
+                SSE_LIVE (NOC | 24_MAR_2026)
+              </div>
+            </div>
+
+            <!-- Topology canvas -->
+            <div class="dash-topo">
+              <svg class="topo-svg" id="topoSvg" viewBox="0 0 420 200" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                  <filter id="glow-red" x="-80%" y="-80%" width="260%" height="260%">
+                    <feGaussianBlur stdDeviation="4" result="blur"/>
+                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                  <filter id="glow-teal" x="-60%" y="-60%" width="220%" height="220%">
+                    <feGaussianBlur stdDeviation="3" result="blur"/>
+                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                </defs>
+
+                <!-- Edges (thin teal lines) -->
+                <!-- DB_CLUSTER → center, connected to many -->
+                <line x1="185" y1="105" x2="120" y2="65"  stroke="#00c8aa" stroke-width="0.8" opacity="0.4"/>
+                <line x1="185" y1="105" x2="90"  y2="95"  stroke="#00c8aa" stroke-width="0.8" opacity="0.4"/>
+                <line x1="185" y1="105" x2="75"  y2="130" stroke="#00c8aa" stroke-width="0.8" opacity="0.4"/>
+                <line x1="185" y1="105" x2="150" y2="155" stroke="#00c8aa" stroke-width="0.8" opacity="0.4"/>
+                <line x1="185" y1="105" x2="245" y2="75"  stroke="#00c8aa" stroke-width="0.8" opacity="0.4"/>
+                <line x1="185" y1="105" x2="270" y2="110" stroke="#00c8aa" stroke-width="0.8" opacity="0.4"/>
+                <line x1="185" y1="105" x2="255" y2="150" stroke="#00c8aa" stroke-width="0.8" opacity="0.4"/>
+                <line x1="185" y1="105" x2="310" y2="90"  stroke="#00c8aa" stroke-width="0.8" opacity="0.4"/>
+                <!-- Blast radius edges (red) -->
+                <line x1="185" y1="105" x2="230" y2="120" stroke="#ff3366" stroke-width="1.2" opacity="0.7"/>
+                <line x1="230" y1="120" x2="265" y2="140" stroke="#ff3366" stroke-width="1.2" opacity="0.6"/>
+                <line x1="230" y1="120" x2="270" y2="110" stroke="#f59e0b" stroke-width="1" opacity="0.6"/>
+                <!-- Extra edges -->
+                <line x1="120" y1="65"  x2="245" y2="75"  stroke="#00c8aa" stroke-width="0.6" opacity="0.3"/>
+                <line x1="90"  y1="95"  x2="75"  y2="130" stroke="#00c8aa" stroke-width="0.6" opacity="0.3"/>
+                <line x1="310" y1="90"  x2="350" y2="70"  stroke="#00c8aa" stroke-width="0.6" opacity="0.3"/>
+                <line x1="245" y1="75"  x2="310" y2="90"  stroke="#00c8aa" stroke-width="0.6" opacity="0.3"/>
+                <line x1="30"  y1="80"  x2="90"  y2="95"  stroke="#00c8aa" stroke-width="0.6" opacity="0.25"/>
+                <line x1="30"  y1="115" x2="75"  y2="130" stroke="#00c8aa" stroke-width="0.6" opacity="0.25"/>
+
+                <!-- Callers / outer labels -->
+                <!-- CALLERS label -->
+                <rect x="60" y="56" width="44" height="11" fill="#0b1c2e" stroke="#0e2236" stroke-width="0.5"/>
+                <text x="82" y="64" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="5" fill="#3d5a6e">CALLERS</text>
+                <circle cx="90" cy="95" r="4.5" fill="#0b1c2e" stroke="#00c8aa" stroke-width="1"/>
+                <circle cx="75" cy="130" r="4.5" fill="#0b1c2e" stroke="#00c8aa" stroke-width="1"/>
+                <circle cx="30" cy="80"  r="4.5" fill="#0b1c2e" stroke="#3d5a6e" stroke-width="0.8"/>
+                <circle cx="30" cy="115" r="4.5" fill="#0b1c2e" stroke="#3d5a6e" stroke-width="0.8"/>
+
+                <!-- api-gateway labels (outer, amber) -->
+                <rect x="22" y="68" width="52" height="10" fill="#1a1200" stroke="#f59e0b" stroke-width="0.7"/>
+                <text x="48" y="75.5" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="5" fill="#f59e0b">api-gateway-a</text>
+                <rect x="22" y="106" width="52" height="10" fill="#1a1200" stroke="#f59e0b" stroke-width="0.7"/>
+                <text x="48" y="113.5" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="5" fill="#f59e0b">api-gateway-b</text>
+
+                <!-- DCLUSTER label -->
+                <text x="128" y="55" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="5.5" fill="#3d5a6e">DCLUSTER</text>
+                <circle cx="120" cy="65" r="4" fill="#07101c" stroke="#3d5a6e" stroke-width="0.7"/>
+
+                <!-- AUTH_VAULT nodes -->
+                <rect x="240" y="57" width="52" height="10" fill="#1a0a08" stroke="#f59e0b" stroke-width="0.7"/>
+                <text x="266" y="64.5" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="5" fill="#f59e0b">AUTH_VAULT</text>
+                <circle cx="310" cy="90" r="5" fill="#07101c" stroke="#00c8aa" stroke-width="1"/>
+                <text x="310" y="82" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="4.5" fill="#3d5a6e">MEOTERY</text>
+
+                <!-- API_GATEWAY center node (teal) -->
+                <rect x="255" y="66" width="56" height="11" fill="#001f1a" stroke="#00c8aa" stroke-width="0.8"/>
+                <text x="283" y="74" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="5" fill="#00c8aa">API_GATEWAY</text>
+
+                <!-- DB_CLUSTER — the origin (RED GLOW) -->
+                <circle cx="185" cy="105" r="14" fill="#0d0204" stroke="#ff3366" stroke-width="2" filter="url(#glow-red)" class="node-hot"/>
+                <circle cx="185" cy="105" r="8"  fill="#200408" stroke="#ff3366" stroke-width="1.5"/>
+                <rect x="154" y="96" width="54" height="11" fill="#1a0004" stroke="#ff3366" stroke-width="0.8"/>
+                <text x="181" y="104" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="5.5" fill="#ff3366" font-weight="700">DB_CLUSTER</text>
+
+                <!-- API_GATEWAY downstream (dark red) -->
+                <rect x="198" y="116" width="56" height="11" fill="#160004" stroke="#cc2244" stroke-width="0.8"/>
+                <text x="226" y="124" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="5" fill="#cc2244">API_GATEWAY</text>
+                <circle cx="230" cy="120" r="6" fill="#160004" stroke="#cc2244" stroke-width="1.2"/>
+
+                <!-- AUTH_VAULT downstream -->
+                <rect x="238" y="96" width="54" height="10" fill="#160004" stroke="#cc2244" stroke-width="0.7"/>
+                <text x="265" y="103.5" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="5" fill="#cc2244">AUTH_VAULT</text>
+
+                <!-- DOWNSTREAM node -->
+                <rect x="224" y="141" width="58" height="10" fill="#160004" stroke="#ff3366" stroke-width="0.8"/>
+                <text x="253" y="148.5" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="5" fill="#ff3366">DOWNSTREAM</text>
+                <circle cx="265" cy="140" r="5" fill="#200408" stroke="#ff3366" stroke-width="1.2"/>
+
+                <!-- DIM_VRET node -->
+                <rect x="242" y="158" width="44" height="10" fill="#0f0002" stroke="#882233" stroke-width="0.7"/>
+                <text x="264" y="165.5" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="4.5" fill="#882233">DIM_VRET</text>
+
+                <!-- AUTH_VAULT bottom -->
+                <rect x="167" y="153" width="54" height="11" fill="#160004" stroke="#ff3366" stroke-width="0.8"/>
+                <text x="194" y="161" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="5" fill="#ff3366">AUTH_VAULT</text>
+
+                <!-- UBI_STAUSS label -->
+                <text x="128" y="124" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="5" fill="#3d5a6e">UBI_STAUSS</text>
+                <text x="104" y="140" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="4.5" fill="#3d5a6e">API_CALSAFTER</text>
+
+                <!-- AB_CHATP label -->
+                <text x="148" y="78" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="4.5" fill="#3d5a6e">AB_CHATP</text>
+                <text x="335" y="61" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="4.5" fill="#3d5a6e">DEVELOPER</text>
+                <circle cx="350" cy="70" r="3.5" fill="#07101c" stroke="#3d5a6e" stroke-width="0.7"/>
+
+                <!-- Extra dim nodes -->
+                <circle cx="150" cy="155" r="4" fill="#0b1220" stroke="#1e3a5f" stroke-width="0.7"/>
+              </svg>
+
+              <!-- Blast radius popup -->
+              <div class="blast-popup">
+                <div class="blast-popup-title">BLAST RADIUS REPORT</div>
+                <div class="blast-popup-row">Impact Score: <span>89</span></div>
+                <div class="blast-popup-row">MTTR: <span>23m</span></div>
+              </div>
+            </div>
+
+            <!-- Right panels -->
+            <div class="dash-right">
+              <!-- Incident Stream -->
+              <div class="dash-panel" style="flex: 0 0 auto;">
+                <div class="dash-panel-title">INCIDENT STREAM</div>
+                <div class="dash-incident-row">
+                  <strong>INCIDENT STREAM:</strong> SSE:RARE:api_VANDK...<br>
+                  <span style="color:#3d5a6e">Ashkelon NOC | 24_MAR_2026 1_9:57 PM</span>
+                </div>
+                <div class="dash-incident-row">
+                  <strong>INCIDENT STREAM:</strong> SSE_LIVE<br>
+                  <span style="color:#3d5a6e">Ashkelon NOC | 24_MAR_2026 1_9:57 PM</span>
+                </div>
+                <div class="dash-incident-row">
+                  <strong>INCIDENT STREAM:</strong> SSE:RARE:api_ATGEM...<br>
+                  <span style="color:#3d5a6e">Ashkelon NOC | 24_MAR_2026 1_9:53 PM</span>
+                </div>
+                <div class="dash-incident-row" style="border:none">
+                  <strong>INCIDENT STREAM:</strong> SSE:RARE:api_BRAND...<br>
+                  <span style="color:#3d5a6e">Ashkelon NOC | 24_MAR_2026 1_9:52 PM</span>
+                </div>
+              </div>
+
+              <!-- Node Telemetry -->
+              <div class="dash-telemetry">
+                <div class="dash-panel-title">NODE TELEMETRY</div>
+                <div style="font-size:6px; color:#3d5a6e; margin-bottom:4px; display:flex; justify-content:space-between;">
+                  <span>MONOSPACE CHARTS</span>
+                  <span style="color:#00c8aa">■ NCL</span>
+                  <span style="color:#f59e0b">■ XRL</span>
+                  <span style="color:#ff4466">■ VRE</span>
+                </div>
+                <!-- Simulated bar chart rows -->
+                <div class="mini-chart" id="chart1"></div>
+                <div style="display:flex; justify-content:space-between; font-size:5.5px; color:#1e3a5f; margin-bottom:6px;">
+                  <span>10:00</span><span>15:00</span><span>19:00</span><span>23:00</span><span>23:00</span>
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                  <div>
+                    <div style="font-size:6px; color:#3d5a6e; margin-bottom:3px;">BROW/SITE SCORE</div>
+                    <div class="mini-chart" id="chart2"></div>
+                    <div style="display:flex; justify-content:space-between; font-size:5px; color:#1e3a5f;">
+                      <span>12:00</span><span>13:00</span><span>13:6</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div style="font-size:6px; color:#3d5a6e; margin-bottom:3px;">BEKTR CHARTS</div>
+                    <div class="mini-chart" id="chart3"></div>
+                    <div style="display:flex; justify-content:space-between; font-size:5px; color:#1e3a5f;">
+                      <span>12:00</span><span>13:00</span><span>13:2</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="margin-top:6px;">
+                  <div style="font-size:6px; color:#3d5a6e; margin-bottom:3px; display:flex; justify-content:space-between;">
+                    <span>STARTLOB FREMENTS</span>
+                    <span style="color:#00c8aa">■ RUK</span>
+                    <span style="color:#f59e0b">■ VOG</span>
+                  </div>
+                  <div class="mini-chart" id="chart4"></div>
+                  <div style="display:flex; justify-content:space-between; font-size:5px; color:#1e3a5f;">
+                    <span>10:00</span><span>11:00</span><span>12:00</span><span>13:2</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /dash-inner -->
+        </div><!-- /monitor-screen -->
+
+        <div class="monitor-stand"></div>
+        <div class="monitor-base"></div>
+      </div><!-- /monitor-outer -->
+    </div><!-- /monitor-wrap -->
+
+  </main><!-- /main-content -->
+
+  <!-- ── RIGHT NAV ── -->
+  <nav class="right-nav">
+    <ul class="nav-links">
+      <li><a href="#">HOME</a></li>
+      <li><a href="#">PRODUCTS <span class="arrow">›</span></a></li>
+      <li><a href="#">INTRODUCTION <span class="arrow">›</span></a></li>
+      <li><a href="#">INFLENRATIONS</a></li>
+      <li><a href="#">DISCOVERY</a></li>
+      <li><a href="#">RESOURCES</a></li>
+      <li><a href="#">MISSIONCONTROL</a></li>
+    </ul>
+
+    <button class="nav-cta">REQUEST ACCESS</button>
+
+    <div class="feature-cards">
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="5"  cy="6"  r="2"/><circle cx="19" cy="6"  r="2"/>
+            <circle cx="5"  cy="18" r="2"/><circle cx="19" cy="18" r="2"/>
+            <circle cx="12" cy="12" r="2"/>
+            <line x1="7"  y1="6.5"  x2="10" y2="11.2"/>
+            <line x1="14" y1="12.8" x2="17" y2="17.5"/>
+            <line x1="17" y1="6.5"  x2="14" y2="11.2"/>
+            <line x1="7"  y1="17.5" x2="10" y2="12.8"/>
+          </svg>
+        </div>
+        <div class="feature-label">ZERO RE-RENDER<br>LIVE NEO4J<br>TOPOLOGY</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M9 12l2 2 4-4"/>
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.5"/>
+            <line x1="12" y1="3" x2="12" y2="21" stroke="currentColor" stroke-width="0.6" opacity="0.3"/>
+            <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="0.6" opacity="0.3"/>
+          </svg>
+        </div>
+        <div class="feature-label">AI ANOMALY<br>DETECTION</div>
+      </div>
+
+    </div>
+
+    <div class="nav-cta-bottom">
+      <button class="nav-cta" style="margin:0;display:block;width:100%;">REQUEST ACCESS ▲</button>
+    </div>
+  </nav>
+
+</div><!-- /page-grid -->
+
+<script>
+/* Generate bar charts inside the mini monitor */
+function makeChart(id, count, maxH, colors) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  for (let i = 0; i < count; i++) {
+    const h  = Math.floor(Math.random() * maxH * 0.6 + maxH * 0.2);
+    const cl = colors[Math.floor(Math.random() * colors.length)];
+    const bar = document.createElement('div');
+    bar.className = 'mini-bar ' + cl;
+    bar.style.height = h + 'px';
+    el.appendChild(bar);
+  }
+}
+
+makeChart('chart1', 32, 28, ['', '', 'amber', 'red']);
+makeChart('chart2', 20, 20, ['', 'amber']);
+makeChart('chart3', 20, 20, ['', 'amber']);
+makeChart('chart4', 30, 24, ['', '', '', 'amber']);
+</script>
+</body>
+</html>
